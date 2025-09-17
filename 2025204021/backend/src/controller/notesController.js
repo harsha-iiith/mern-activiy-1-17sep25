@@ -1,9 +1,9 @@
-import Task from "../models/tasks.model.js";
+import Notes from "../models/notes.model.js";
 import { v4 as uuidv4 } from "uuid";
 // GET all notes
 export async function getAllNotes(req, res) {
   try {
-    const notes = await Task.find();
+    const notes = await Notes.find();
     res.status(200).json(notes);
     return;
   } catch (err) {
@@ -22,7 +22,7 @@ export async function createNotes(req, res) {
     }
 
     const id = uuidv4();
-    const note = await Task.create({ id, title, content });
+    const note = await Notes.create({ id, title, content });
     res.status(201).json(note);
     return;
   } catch (err) {
@@ -48,14 +48,14 @@ export async function updateNotes(req, res) {
       return;
     }
 
-    const task = await Task.findOne({ id });
+    const task = await Notes.findOne({ id });
 
     if (!task) {
       res.status(404).json({ error: "Note not found" });
       return;
     }
 
-    const updatedTask = await Task.findOneAndUpdate(
+    const updatedTask = await Notes.findOneAndUpdate(
       { id },
       { title, content },
       { new: true }
@@ -77,12 +77,12 @@ export async function deleteNotes(req, res) {
       return;
     }
 
-    const task = await Task.findOne({ id });
+    const task = await Notes.findOne({ id });
     if (!task) {
       res.status(404).json({ error: "Note not found" });
       return;
     }
-    const deletedNote = await Task.findOneAndDelete({ id });
+    const deletedNote = await Notes.findOneAndDelete({ id });
     res.status(200).json(deletedNote);
     return;
   } catch (err) {
@@ -93,12 +93,12 @@ export async function deleteNotes(req, res) {
 
 // extra route
 export async function getNumberOfNotes(req, res) {
-  const numberOfNotes = await Task.countDocuments();
+  const numberOfNotes = await Notes.countDocuments();
   res.status(200).json({ numberOfNotes });
   return;
 }
 
 export async function resetNotes() {
-  await Task.deleteMany({});
+  await Notes.deleteMany({});
   return;
 }

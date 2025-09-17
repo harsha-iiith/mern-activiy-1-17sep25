@@ -1,9 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 
-const TaskSchema = new Schema({
+const NotesSchema = new Schema({
   id: String,
   title: String,
   content: String,
 });
 
-export default mongoose.model("Task", TaskSchema);
+export default mongoose.model("Task", NotesSchema);
