@@ -78,8 +78,8 @@ export async function deleteNotes(req, res) {
       res.status(404).json({ error: "Note not found" });
       return;
     }
-    await Task.deleteOne(id);
-    res.status(204).json({ message: "Note deleted successfully" });
+    const deletedNote = await Task.findByIdAndDelete(id);
+    res.status(200).json(deletedNote);
     return;
   } catch (err) {
     res.status(500).json({ error: "Failed to delete note" });
@@ -87,6 +87,14 @@ export async function deleteNotes(req, res) {
   }
 }
 
+// extra route
+export async function getNumberOfNotes(req, res) {
+  const numberOfNotes = await Task.countDocuments();
+  res.status(200).json({ numberOfNotes });
+  return;
+}
+
 export async function resetNotes() {
+  await Task.deleteMany({});
   return;
 }

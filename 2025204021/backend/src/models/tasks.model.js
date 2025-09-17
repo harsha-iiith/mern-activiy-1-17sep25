@@ -1,10 +1,22 @@
 import mongoose, { Schema } from "mongoose";
-const ObjectId = Schema.ObjectId;
 
 const TaskSchema = new Schema({
-  id: ObjectId,
   title: String,
   content: String,
+}, {
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+// Virtual for id to match test expectations
+TaskSchema.virtual('id').get(function() {
+  return this._id.toHexString();
+});
+
+// Ensure virtual fields are serialised
+TaskSchema.set('toJSON', {
+  virtuals: true
 });
 
 export default mongoose.model("Task", TaskSchema);
