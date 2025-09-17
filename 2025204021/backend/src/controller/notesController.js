@@ -1,5 +1,5 @@
 import Task from "../models/tasks.model.js";
-
+import { v4 as uuidv4 } from "uuid";
 // GET all notes
 export async function getAllNotes(req, res) {
   try {
@@ -20,7 +20,9 @@ export async function createNotes(req, res) {
       res.status(400).json({ error: "Title and content required" });
       return;
     }
-    const note = await Task.create({ title, content });
+
+    const id = uuidv4();
+    const note = await Task.create({ id, title, content });
     res.status(201).json(note);
     return;
   } catch (err) {
@@ -33,26 +35,28 @@ export async function createNotes(req, res) {
 export async function updateNotes(req, res) {
   try {
     const { id } = req.params;
+    console.log(id);
     if (!id) {
       res.status(400).json({ error: "ID required" });
       return;
     }
     const { title, content } = req.body;
+    console.log(title, content);
 
     if (!title || !content) {
       res.status(400).json({ error: "Title and content required" });
       return;
     }
 
-    const task = await Task.findById(id);
+    const task = await Task.findOne({ id });
 
     if (!task) {
       res.status(404).json({ error: "Note not found" });
       return;
     }
 
-    const updatedTask = await Task.findByIdAndUpdate(
-      id,
+    const updatedTask = await Task.findOneAndUpdate(
+      { id },
       { title, content },
       { new: true }
     );
@@ -73,12 +77,12 @@ export async function deleteNotes(req, res) {
       return;
     }
 
-    const task = await Task.findById(id);
+    const task = await Task.findOne({ id });
     if (!task) {
       res.status(404).json({ error: "Note not found" });
       return;
     }
-    const deletedNote = await Task.findByIdAndDelete(id);
+    const deletedNote = await Task.findOneAndDelete({ id });
     res.status(200).json(deletedNote);
     return;
   } catch (err) {
