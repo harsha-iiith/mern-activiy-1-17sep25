@@ -1,64 +1,3 @@
-# Mern Lab 1
-
-## Files that i have changed
-
-## 1) In ./backend/.env
-
-## provided .env.example for reference
-
-```bash
-PORT=3000
-MONGO_URI=mongodb://127.0.0.1:27017/labactivity1
-NODE_ENV=test
-```
-
-## 2) In ./backend/src/server.js
-
-## Called connectDB function in server.js
-
-```javascript
-// server.js
-import { connectDB } from "./config/db.js";
-
-// Only start the server if NOT in test mode
-if (process.env.NODE_ENV !== "test") {
-  // Connect to MongoDB
-  await connectDB();
-
-  // Start the server
-  app.listen(PORT, () => {
-    console.log("Server started on PORT:", PORT);
-  });
-}
-```
-
-## 3) In ./backend/src/models/notes.model.js
-
-```javascript
-// from documentation created code in this
-// notes.model.js
-import mongoose, { Schema } from "mongoose";
-
-const NotesSchema = new Schema({
-  id: String,
-  title: String,
-  content: String,
-});
-
-export default mongoose.model("Notes", NotesSchema);
-```
-
-## 4) In ./backend/src/controller/notesController.js
-
-## Now using this i have updated the code in the controller to get our full functionality
-
-## Added an extra route to get the number of notes
-
-```javascript
-// In ./backend/src/controller/notesController.js
-
-// used try catch and imported the model and used for all the endpoints including the extra endpoint(to get the number of notes)
-
 import Notes from "../models/notes.model.js";
 import { v4 as uuidv4 } from "uuid";
 // GET all notes
@@ -152,7 +91,7 @@ export async function deleteNotes(req, res) {
   }
 }
 
-// extra route to get the number of notes
+// extra route
 export async function getNumberOfNotes(req, res) {
   const numberOfNotes = await Notes.countDocuments();
   res.status(200).json({ numberOfNotes });
@@ -163,55 +102,3 @@ export async function resetNotes() {
   await Notes.deleteMany({});
   return;
 }
-```
-
-## 5) In ./backend/routes/notesRouter.js
-
-## Added an extra route to get the number of notes
-
-```javascript
-// In ./backend/routes/notesRouter.js
-
-const router = express.Router();
-
-router.get("/", getAllNotes);
-
-router.post("/", createNotes);
-
-router.put("/:id", updateNotes);
-
-router.delete("/:id", deleteNotes);
-
-router.get("/number", getNumberOfNotes);
-
-export default router;
-```
-
-## 6)In ./backend/test/notes.test.js
-
-## In the test file we have to connect to db and close the connection and reset the notes
-
-## So that we can test the code properly
-
-```javascript
-// Add beforeAll and afterAll to the test file and before each test call the resetNotes function
-beforeAll(async () => {
-  await connectDB();
-});
-
-afterAll(async () => {
-  await mongoose.connection.close();
-});
-
-beforeEach(async () => {
-  await resetNotes();
-});
-```
-
-## Also added package.json for the backend
-
-## 7) run the tests
-
-```bash
-npm run test
-```
